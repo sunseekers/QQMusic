@@ -21,9 +21,9 @@
 </template>
 
 <script type="text/ecmascript-6">
-import {getRecommend} from '../../api/recommend'
-import {ERR_OK} from '../../api/config'
-import Slider from '../../base/slider/slider'
+import {getRecommend} from 'api/recommend'
+import {ERR_OK} from 'api/config'
+import Slider from 'base/slider/slider'
   export default {
     data(){
       return {
