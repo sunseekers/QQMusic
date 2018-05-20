@@ -18,7 +18,7 @@
     </ul>
     <div class="list-shortcut" @touchstart="onShortcutStart" @touchmove.stop.prevent="onShortcutTouchMove">
       <ul>
-        <li v-for="(item,index) in shortcutList" :key="index" :data-index="index" class="item">
+        <li v-for="(item,index) in shortcutList" :key="index" :data-index="index" class="item" :class="{'current':currentIndex===index}">
           {{item}}
         </li>
       </ul>
@@ -37,7 +37,8 @@ const ANCHOR_HEIGHT = 18
     created(){//需要在两个函数之间使用，没必要监听，所以就在created的时候声明
       this.touch = {},
       this.listenScroll = true
-      this.listHeight = []
+      this.listHeight = [],
+      this.probeType = 3
     },
     data(){
       return {
@@ -55,9 +56,6 @@ const ANCHOR_HEIGHT = 18
     components:{
       Scroll
     },
-    // created(){
-    //  // console.log(this.shortcutList)
-    // },
     computed:{
       shortcutList(){
         return this.data.map(group=>{
@@ -96,7 +94,6 @@ const ANCHOR_HEIGHT = 18
           index = this.listHeight.length - 2
         }
         this.scrollY = -this.listHeight[index]
-        //这个功能没有效果，可能和固定元素的位置有关系，现在还不知道为什么
         this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0)
       },
       _calculateHeight(){//计算滚动应该落在哪一个区域
@@ -117,11 +114,12 @@ const ANCHOR_HEIGHT = 18
           this._calculateHeight()
         },20)
       },
-      scroll(newY){
+      scrollY(newY){
         const listHeight = this.listHeight
         //当滚动到顶部
         if(newY > 0){
           this.currentIndex = 0
+          return
         }
         //在中间滚动
         for (let i = 0;i < listHeight.length-1; i++) {
@@ -133,6 +131,7 @@ const ANCHOR_HEIGHT = 18
             return 
           }
         }
+        console.log(this.currentIndex)//还有问题，等会看
         //当滚到到底部，且 -newY 大于最后一个元素的上限
         this.currentIndex = listHeight.length - 2
       },
@@ -174,7 +173,7 @@ const ANCHOR_HEIGHT = 18
           color: $color-text-l
           font-size: $font-size-medium
     .list-shortcut
-      position: fixed//样式有问题，有时间调整
+      position: absolute
       z-index: 30
       right: 0
       top: 50%
