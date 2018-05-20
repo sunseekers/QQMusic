@@ -1,37 +1,55 @@
 <template>
   <div class="recommend" ref="recommend">
-    <div ref="scroll" class="recommend-content">
-      <div class="slider-wrapper" ref="sliderWrapper" v-if="recommend.length">
-      <slider>
-        <div v-for="(item,index) in recommend" :key="index">
-          <a :href="item.linkUrl">
-            <img :src="item.picUrl">
-          </a>
+    <scroll ref="scroll" class="recommend-content" :data="discList">
+      <div>
+        <div class="slider-wrapper" ref="sliderWrapper" v-if="recommend.length">
+        <slider>
+          <div v-for="(item,index) in recommend" :key="index">
+            <a :href="item.linkUrl">
+              <img :src="item.picUrl" class="needsclick"  @load="loadImage()">
+            </a>
+          </div>
+        </slider>
         </div>
-      </slider>
+        <div class="recommend-list">
+          <h1 class="list-title">热门歌单推荐</h1>
+          <ul>
+            <li v-for="(item,index) in discList" :key="index" class="item">
+              <div class="icon">
+                <img  v-lazy="item.imgurl" width="60" height="60"/>
+              </div>
+              <div class="text">
+                <h2 class="name" v-html="item.creator.name"></h2>
+                <p class="desc" v-html="item.dissname"></p>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="recommend-list">
-        <h1 class="list-title">热门歌单推荐</h1>
-        <ul>
-          <li></li>
-        </ul>
+      <div class="loading-container" v-show="!discList.length">
+        <loading></loading>
       </div>
-    </div>
+    </scroll>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import {getRecommend, getDiscList} from 'api/recommend'
 import {ERR_OK} from 'api/config'
+import Scroll from 'base/scroll/scroll'
 import Slider from 'base/slider/slider'
+import Loading from 'base/loading/loading'
   export default {
     data(){
       return {
-        recommend:[]
+        recommend:[],
+        discList:[]
       }
     },
     components:{
-      Slider
+      Slider,
+      Scroll,
+      Loading
     },
     created(){
       this._getRecommend()
@@ -46,11 +64,19 @@ import Slider from 'base/slider/slider'
         })
       },
       _getDiscList(){
+        console.log(getDiscList())
         getDiscList().then(res=>{
           if(res.code === ERR_OK){
+            this.discList = res.data.list
             console.log(res.data.list)
           }
         })
+      },
+      loadImage(){
+        if (!this.checkLoaded) {
+          this.$refs.scroll.refresh()
+          this.checkLoaded = true
+        }
       }
     }
   }
@@ -106,3 +132,5 @@ import Slider from 'base/slider/slider'
         top: 50%
         transform: translateY(-50%)
 </style>
+
+

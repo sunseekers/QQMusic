@@ -17,6 +17,15 @@ export function getData(el, name, val) {
   return el.getAttribute(prefix + name)
 }
 
+// export function getData(el,name,val){
+//   const prefix = "data-"
+//   name = prefix + name
+//   if (val) {
+//     return el.setAttribute(name,val)
+//   }
+//   return el.getAttribute(name)
+// }
+
 let elementStyle = document.createElement('div').style
 
 let vendor = (() => {

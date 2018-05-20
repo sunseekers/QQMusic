@@ -13,9 +13,9 @@ const portfinder = require('portfinder')
 //试着反向代理，不一定会成功
 const axios = require('axios')
 const express = require('express')
-let app = express()
-let apiRoutes = express.Router()
-
+const app = express()
+var apiRoutes = express.Router()
+app.use('/api',apiRoutes)
 
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
@@ -29,10 +29,9 @@ const devWebpackConfig = merge(baseWebpackConfig, {
 
   // these devServer options should be customized in /config/index.js
   devServer: {
-    //不能这样代理有问题
     before(app) {
-      apiRoutes.get('/getDiscList',function(res,req){
-        let url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
+      app.get('/api/getDiscList',function(req,res){
+        var url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
         axios.get(url,{
           headers:{//修改http的请求头，欺骗接口
             referer: 'https://c.y.qq.com/',
@@ -42,10 +41,10 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         }).then(response=>{
           res.json(response.data)
         }).catch(e=>{
-          console.log(e)
+          console.log(12)
+          //console.log(e)
         })
-      })
-      app.use('/api',apiRoutes)
+      }) 
     },
     clientLogLevel: 'warning',
     historyApiFallback: {
@@ -67,7 +66,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     quiet: true, // necessary for FriendlyErrorsPlugin
     watchOptions: {
       poll: config.dev.poll,
-    }
+    },
+    
   },
   plugins: [
     new webpack.DefinePlugin({
