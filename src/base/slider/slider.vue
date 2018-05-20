@@ -5,6 +5,7 @@
       </slot>
     </div>
     <div class="dots">
+      <span class="dot" v-for="(dot,index) in dots" :key="index" :class="{active:currentPageIndex==index}"></span>
     </div>
   </div>
 </template>
@@ -24,13 +25,13 @@
       },
       interval: {
         type: Number,
-        default: 4000
+        default: 400
       }
     },
     data() {
       return {
-        // dots: [],
-        // currentPageIndex: 0
+        dots: [],
+        currentPageIndex: 0
       }
     },
     mounted() {
@@ -38,11 +39,25 @@
         this._setSliderWidth()
         this._initDots()
         this._initSlider()
+        if(this.autoPlay){
+          this._play()
+        }
       }, 20)
-
+      window.addEventListener("resize",()=>{
+        if(!this.slider) return 
+        //如果视窗改变就进行重新计算
+        this._setSliderWidth(true)
+        this.slider.refresh()
+      })
+    },
+    deactivated() {//清楚计时器有利于内存的释放
+      clearTimeout(this.timer)
+    },
+    beforeDestroy() {
+      clearTimeout(this.timer)
     },
     methods: {
-      _setSliderWidth() {
+      _setSliderWidth(isResize) {
         this.children = this.$refs.sliderGroup.children
         //console.log(this.children)
         let width = 0
@@ -54,12 +69,10 @@
           child.style.width = sliderWidth + "px"
           width+=sliderWidth
         }
-        if(this.loop){
+        if(this.loop && !isResize){
           width +=2 * sliderWidth
         }
-        this.$refs.sliderGroup.style.width = width + "px"
-
-        
+        this.$refs.sliderGroup.style.width = width + "px" 
       },
       _initSlider() {
         this.slider =new BScroll(this.$refs.slider,{
@@ -72,11 +85,34 @@
             speed: this.interval
           }
         })
+        //小圆点跟着滚动事件
+        this.slider.on('scrollEnd', () => {
+          console.log(this.slider.getCurrentPage())//这里有问题导致不能自动轮播图片,当前页应该是1，却显示2
+          let pageIndex = this.slider.getCurrentPage().pageX//获取当前页面的信息
+          if (this.loop) {
+            pageIndex -= 1
+          }
+          this.currentPageIndex = pageIndex
+          
+          if (this.autoPlay) {
+            this._play()
+          }
+        })
       },
       _initDots() {
-
+        this.dots = new Array(this.children.length)
       },
-
+      _play(){
+        let pageIndex = this.currentPageIndex + 1
+        
+        if(this.loop){
+          pageIndex +=1
+        }
+        //当我们做 slide 组件的时候，slide 通常会分成多个页面。调用此方法可以滚动到指定的页面。
+        this.timer = setTimeout(() => {//只执行了一次，循环模拟循环播放
+          this.slider.goToPage(pageIndex, 0, 400)
+        }, this.interval)
+      }
     }
   }
 </script>

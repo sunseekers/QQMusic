@@ -2,7 +2,9 @@
   <div id="app">
     <m-header></m-header>
     <tab></tab>
-    <router-view></router-view>
+    <!-- <keep-alive>轮播图切换回来不会自己轮播 -->
+      <router-view></router-view>
+    <!-- </keep-alive> -->
   </div>
 </template>
 
