@@ -9,7 +9,7 @@
       <li v-for="(group,index) in data" :key="index" class="list-group" ref="listGroup">
         <h2 class="list-group-title">{{group.title}}</h2>
         <ul>
-          <li v-for="(item,index) in group.items" :key="index" class="list-group-item">
+          <li @click="selectItem(item)" v-for="(item,index) in group.items" :key="index" class="list-group-item">
             <img class="avatar" v-lazy="item.avatar">
             <span class="name">{{item.name}}</span>
           </li>
@@ -65,7 +65,10 @@ const ANCHOR_HEIGHT = 18
       }
     },
     methods:{//建议私有方法放在下面，公共方法或者绑定事件放在上面
-
+      selectItem(item){
+        this.$emit('select',item)
+        //这是一个基础组件，不会有任何业务逻辑，他仅仅只是把这个事件派发出去，只是告诉引用他的外部我被点击了，点击我的元素是什么，只有外部关心他的才会执行事件
+      },
       onShortcutStart(e){
         let anchorIndex = getData(e.target,'index')
         console.log(e.touches[0])
