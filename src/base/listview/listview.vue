@@ -1,90 +1,113 @@
 <template>
-  <scroll class="listview" 
-  :data="data"
-  ref="listview"
-  :listenScroll="listenScroll"
-  :probe-type="probeType"
-  @scroll="scroll">
+  <scroll @scroll="scroll"
+          :listen-scroll="listenScroll"
+          :probe-type="probeType"
+          :data="data"
+          class="listview"
+          ref="listview">
     <ul>
-      <li v-for="(group,index) in data" :key="index" class="list-group" ref="listGroup">
+      <li v-for="group in data" class="list-group" ref="listGroup">
         <h2 class="list-group-title">{{group.title}}</h2>
-        <ul>
-          <li @click="selectItem(item)" v-for="(item,index) in group.items" :key="index" class="list-group-item">
+        <uL>
+          <li @click="selectItem(item)" v-for="item in group.items" class="list-group-item">
             <img class="avatar" v-lazy="item.avatar">
             <span class="name">{{item.name}}</span>
           </li>
-        </ul>
+        </uL>
       </li>
     </ul>
-    <div class="list-shortcut" @touchstart="onShortcutStart" @touchmove.stop.prevent="onShortcutTouchMove">
+    <div class="list-shortcut" @touchstart.stop.prevent="onShortcutTouchStart" @touchmove.stop.prevent="onShortcutTouchMove"
+         @touchend.stop>
       <ul>
-        <li v-for="(item,index) in shortcutList" :key="index" :data-index="index" class="item" :class="{'current':currentIndex===index}">
-          {{item}}
+        <li v-for="(item, index) in shortcutList" :key="index" :data-index="index" class="item"
+            :class="{'current':currentIndex===index}">{{item}}
         </li>
       </ul>
     </div>
+    <!-- <div class="list-fixed" ref="fixed" v-show="fixedTitle">
+      <div class="fixed-title">{{fixedTitle}} </div>
+    </div> -->
+    <!-- <div v-show="!data.length" class="loading-container">
+      <loading></loading>
+    </div> -->
   </scroll>
 </template>
 
 <script type="text/ecmascript-6">
-import Scroll from "base/scroll/scroll"
-import { getData } from "common/js/dom"
-const TITLE_HEIGHT = 30
-const ANCHOR_HEIGHT = 18
-//在vue中的data，props，computed里面声明的数据都会有vue的get或者set方法
-//目的是为了和dom做数据绑定，监听数据的变化
+  import Scroll from 'base/scroll/scroll'
+  import Loading from 'base/loading/loading'
+  import {getData} from 'common/js/dom'
+
+  const TITLE_HEIGHT = 30
+  const ANCHOR_HEIGHT = 18
+
   export default {
-    created(){//需要在两个函数之间使用，没必要监听，所以就在created的时候声明
-      this.touch = {},
-      this.listenScroll = true
-      this.listHeight = [],
-      this.probeType = 3
-    },
-    data(){
-      return {
-        scrollY: -1,
-        currentIndex: 0,
-        diff:-1
-      }
-    },
-    props:{
-      data:{
-        type:Array,
+    props: {
+      data: {
+        type: Array,
         default: []
       }
     },
-    components:{
-      Scroll
-    },
-    computed:{
-      shortcutList(){
-        return this.data.map(group=>{
-          //console.log(group.title.substr(0,1))
-          return group.title.substr(0,1)
+    computed: {
+      shortcutList() {
+        return this.data.map((group) => {
+          return group.title.substr(0, 1)
         })
+      },
+      // fixedTitle() {
+      //   return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
+      // }
+    },
+    data() {
+      return {
+        scrollY: -1,
+        currentIndex: 0,
+        diff: -1
       }
     },
-    methods:{//建议私有方法放在下面，公共方法或者绑定事件放在上面
-      selectItem(item){
-        this.$emit('select',item)
-        //这是一个基础组件，不会有任何业务逻辑，他仅仅只是把这个事件派发出去，只是告诉引用他的外部我被点击了，点击我的元素是什么，只有外部关心他的才会执行事件
+    created() {
+      this.probeType = 3
+      this.listenScroll = true
+      this.touch = {}
+      this.listHeight = []
+    },
+    methods: {
+      selectItem(item) {
+        this.$emit('select', item)
       },
-      onShortcutStart(e){
-        let anchorIndex = getData(e.target,'index')
+      onShortcutTouchStart(e) {
+        let anchorIndex = getData(e.target, 'index')
         let firstTouch = e.touches[0]
         this.touch.y1 = firstTouch.pageY
         this.touch.anchorIndex = anchorIndex
+
         this._scrollTo(anchorIndex)
       },
-      onShortcutTouchMove(e){
+      onShortcutTouchMove(e) {
         let firstTouch = e.touches[0]
         this.touch.y2 = firstTouch.pageY
-        let delta = (this.touch.y2-this.touch.y1)/ANCHOR_HEIGHT | 0
+        let delta = (this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT | 0
         let anchorIndex = parseInt(this.touch.anchorIndex) + delta
+
         this._scrollTo(anchorIndex)
       },
-      scroll(pos){
-        this.scrollY = pos.y//实时获取滚动Y轴的距离
+      refresh() {
+        this.$refs.listview.refresh()
+      },
+      scroll(pos) {
+        this.scrollY = pos.y
+      },
+      _calculateHeight() {
+        this.listHeight = []
+        const list = this.$refs.listGroup
+        let height = 0
+        this.listHeight.push(height)
+        for (let i = 0; i < list.length; i++) {
+          let item = list[i]
+          height += item.clientHeight
+          this.listHeight.push(height)
+        }
+        console.log(this.listHeight)
       },
       _scrollTo(index) {
         if (!index && index !== 0) {
@@ -97,49 +120,47 @@ const ANCHOR_HEIGHT = 18
         }
         this.scrollY = -this.listHeight[index]
         this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0)
-      },
-      _calculateHeight(){//计算滚动应该落在哪一个区域
-        this.listHeight = []//记录每一个区域的高度
-        const list = this.$refs.listGroup
-        let height = 0
-        this.listHeight.push(height)
-        for(let i = 0; i < list.length; i++){
-          let item = list[i]
-          height += item.clientHeight
-          this.listHeight.push(height)
-        }
       }
     },
-    watch:{
-      data(){
-        setTimeout(()=>{
+    watch: {
+      data() {
+        setTimeout(() => {
           this._calculateHeight()
-        },20)
+        }, 20)
       },
-      scrollY(newY){
+      scrollY(newY) {
         const listHeight = this.listHeight
-        //当滚动到顶部
-        if(newY > 0){
+        // 当滚动到顶部，newY>0
+        if (newY > 0) {
           this.currentIndex = 0
           return
         }
-        //在中间滚动
-        for (let i = 0;i < listHeight.length-1; i++) {
+        // 在中间部分滚动
+        for (let i = 0; i < listHeight.length - 1; i++) {
           let height1 = listHeight[i]
           let height2 = listHeight[i + 1]
           if (-newY >= height1 && -newY < height2) {
             this.currentIndex = i
             this.diff = height2 + newY
-            return 
+            return
           }
         }
-        console.log(this.currentIndex)
-        //当滚到到底部，且 -newY 大于最后一个元素的上限
+        // 当滚动到底部，且-newY大于最后一个元素的上限
         this.currentIndex = listHeight.length - 2
       },
+      // diff(newVal) {
+      //   let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
+      //   if (this.fixedTop === fixedTop) {
+      //     return
+      //   }
+      //   this.fixedTop = fixedTop
+      //   this.$refs.fixed.style.transform = `translate3d(0,${fixedTop}px,0)`
+      // }
+    },
+    components: {
+      Scroll,
+      Loading
     }
-
-
   }
 
 </script>

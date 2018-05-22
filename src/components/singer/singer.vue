@@ -9,6 +9,8 @@ import { getSingerList} from 'api/singer'
 import {ERR_OK} from 'api/config'
 import Singer from 'common/js/singer'
 import ListView from "base/listview/listview"
+import { mapMutations } from "vuex"
+//mapMutations  是对mutations 做一层封装，在methods，用扩展运算符，就可以做一个对象的映射，映射一个方法名
 const HOT_NAME = "热门"
 const HOT_SINGER_LEN = 10
 export default {
@@ -24,16 +26,19 @@ export default {
     this._getSingerList()
   },
   methods:{
+    ...mapMutations({
+      setSinger:"SET_SINGER"//映射 setSinger 是一个方法名，SET_SINGER 是mutations-types 里面的数据
+    }),
     selectSinger(singer){
       this.$router.push({
         path:`/singer/${singer.id}`
       })
+      this.setSinger(singer)
     },
     _getSingerList(){
       getSingerList().then(res=>{
         if(res.code === ERR_OK){
           this.singers = this._normalizeSinger(res.data.list)
-          console.log(this._normalizeSinger(this.singers))
         }
       })
     },
