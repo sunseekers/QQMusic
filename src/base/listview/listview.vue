@@ -68,7 +68,6 @@ const ANCHOR_HEIGHT = 18
 
       onShortcutStart(e){
         let anchorIndex = getData(e.target,'index')
-        console.log(e.touches[0])
         let firstTouch = e.touches[0]
         this.touch.y1 = firstTouch.pageY
         this.touch.anchorIndex = anchorIndex
@@ -103,7 +102,7 @@ const ANCHOR_HEIGHT = 18
         this.listHeight.push(height)
         for(let i = 0; i < list.length; i++){
           let item = list[i]
-          height += item.clienHeight
+          height += item.clientHeight
           this.listHeight.push(height)
         }
       }
@@ -131,7 +130,7 @@ const ANCHOR_HEIGHT = 18
             return 
           }
         }
-        console.log(this.currentIndex)//还有问题，等会看
+        console.log(this.currentIndex)
         //当滚到到底部，且 -newY 大于最后一个元素的上限
         this.currentIndex = listHeight.length - 2
       },
