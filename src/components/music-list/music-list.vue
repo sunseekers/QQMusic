@@ -19,9 +19,9 @@
       <div class="song-list-wrapper">
         <song-list :songs="songs" :rank="rank" @select="selectItem"></song-list>
       </div>
-      <div v-show="!songs.length" class="loading-container">
+      <!-- <div v-show="!songs.length" class="loading-container">
         <loading></loading>
-      </div>
+      </div> -->
     </scroll>
   </div>
 </template>
@@ -68,9 +68,76 @@
         return `background-image:url(${this.bgImage})`
       }
     },
-  
+    created() {
+      this.probeType = 3
+      this.listenScroll = true
+    },
+    mounted() {
+      this.imageHeight = this.$refs.bgImage.clientHeight
+      this.minTransalteY = -this.imageHeight + RESERVED_HEIGHT
+      this.$refs.list.$el.style.top = `${this.imageHeight}px`
+    },
+    methods: {
+      handlePlaylist(playlist) {
+        const bottom = playlist.length > 0 ? '60px' : ''
+        this.$refs.list.$el.style.bottom = bottom
+        this.$refs.list.refresh()
+      },
+      scroll(pos) {
+        this.scrollY = pos.y
+      },
+      back() {
+        this.$router.back()
+      },
+      selectItem(item, index) {
+        this.selectPlay({
+          list: this.songs,
+          index
+        })
+      },
+      random() {
+        this.randomPlay({
+          list: this.songs
+        })
+      },
+      ...mapActions([
+        'selectPlay',
+        'randomPlay'
+      ])
+    },
+    watch: {
+      scrollY(newVal) {
+        let translateY = Math.max(this.minTransalteY, newVal)
+        let scale = 1
+        let zIndex = 0
+        let blur = 0
+        const percent = Math.abs(newVal / this.imageHeight)
+        if (newVal > 0) {
+          scale = 1 + percent
+          zIndex = 10
+        } else {
+          blur = Math.min(20, percent * 20)
+        }
+
+        this.$refs.layer.style[transform] = `translate3d(0,${translateY}px,0)`
+        this.$refs.filter.style[backdrop] = `blur(${blur}px)`
+        if (newVal < this.minTransalteY) {
+          zIndex = 10
+          this.$refs.bgImage.style.paddingTop = 0
+          this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
+          this.$refs.playBtn.style.display = 'none'
+        } else {
+          this.$refs.bgImage.style.paddingTop = '70%'
+          this.$refs.bgImage.style.height = 0
+          this.$refs.playBtn.style.display = ''
+        }
+        this.$refs.bgImage.style[transform] = `scale(${scale})`
+        this.$refs.bgImage.style.zIndex = zIndex
+      }
+    },
     components: {
       Scroll,
+      Loading,
       SongList
     }
   }
