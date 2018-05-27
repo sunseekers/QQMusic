@@ -5,17 +5,21 @@
     <keep-alive>
       <router-view></router-view>
     </keep-alive>
+    <!-- 播放器不是和路由相关的东西，而是和应用相关，路由切换和他没有关系 -->
+    <player></player>
   </div>
 </template>
 
 <script>
 import MHeader from 'components/m-header/m-header'
 import Tab from 'components/tab/tab'
+import Player from 'components/player/player'
 export default {
   name: 'App',
   components:{
     MHeader,
-    Tab
+    Tab,
+    Player
   }
 }
 </script>
