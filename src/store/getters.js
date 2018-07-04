@@ -1,3 +1,4 @@
+//还可以承担计算属性的作用
 export const singer = state => state.singer
 
 export const playing = state => state.playing

@@ -1,7 +1,7 @@
 <template>
   <div class="song-list">
     <ul>
-      <li @click="selectItem(song, index)" class="item" v-for="(song, index) in songs">
+      <li @click="selectItem(song, index)" class="item" v-for="(song, index) in songs" :key="index">
         <div class="rank" v-show="rank">
           <span :class="getRankCls(index)" v-text="getRankText(index)"></span>
         </div>
@@ -28,6 +28,7 @@
     },
     methods: {
       selectItem(item, index) {
+        //他是一个基础组件，没有任何逻辑，只是告诉他的父组件他被点击了事件是（select），以及点击的元素是什么，索引
         this.$emit('select', item, index)
       },
       getDesc(song) {

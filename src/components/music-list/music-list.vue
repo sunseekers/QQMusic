@@ -94,13 +94,14 @@
         // push：导航到不同的 url，向 history 栈添加一个新的记录
         // replace：导航到不同 url，替换 history 栈中当前记录
       },
-      selectItem(item,index){
+      selectItem(item,index){//定义一个方法，当事件被点击的时候
+      //
         this.selectPaly({
           list:this.songs,
           index
         })
       },
-      ...mapActions([
+      ...mapActions([//语法糖，包装成类似于函数调用的方式。
         'selectPaly'
       ])
       // selectItem(item, index) {

@@ -4,7 +4,9 @@
       <circle class="progress-background" r="50" cx="50" cy="50" fill="transparent"/>
       <circle class="progress-bar" r="50" cx="50" cy="50" fill="transparent" :stroke-dasharray="dashArray"
               :stroke-dashoffset="dashOffset"/>
+              <!-- stroke-dashoffset 描边的偏移，stroke-dasharray 描边，两个变化，就可以显示歌曲的进度 -->
     </svg>
+    <!-- 还可以包裹其他元素 -->
     <slot></slot>
   </div>
 </template>
@@ -12,11 +14,11 @@
 <script type="text/ecmascript-6">
   export default {
     props:{
-      radius:{
+      radius:{//外部传入，可扩展性强
         type: Number,
         default: 100
       },
-      percent: {
+      percent: {//当前的进度
         type: Number,
         default: 0
       }
