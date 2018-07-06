@@ -1,17 +1,17 @@
 import {mapGetters, mapMutations, mapActions} from 'vuex'
 import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/util'
-
+// Mixin是一个对象，如果我们的组件都需要用到一个东西，并且逻辑差不多，把一段js放一个地方写，只要组件用了，会自定添加到我们的代码里面
 export const playlistMixin = {
   computed: {
     ...mapGetters([
       'playlist'
     ])
   },
-  mounted() {
+  mounted() {//组件
     this.handlePlaylist(this.playlist)
   },
-  activated() {
+  activated() {//keep-live 切换的时候触发组件
     this.handlePlaylist(this.playlist)
   },
   watch: {

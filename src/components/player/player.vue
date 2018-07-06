@@ -1,4 +1,5 @@
 <template>
+<!-- currentSong 怎么来的不知道 歌词和图片是两个并排的实现左右滑动-->
   <div class="player" v-show="playlist.length>0">
     <transition name="normal"
                 @enter="enter"
@@ -32,6 +33,7 @@
               <div class="playing-lyric">{{playingLyric}}</div>
             </div>
           </div>
+          <!-- 歌词 currentLyric && currentLyric.lines" 一种报错机制处理，避免没有歌词的时候不报错-->
           <scroll class="middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
             <div class="lyric-wrapper">
               <div v-if="currentLyric">
@@ -43,6 +45,7 @@
             </div>
           </scroll>
         </div>
+        <!-- 两个小滚圆圈 -->
         <div class="bottom">
           <div class="dot-wrapper">
             <span class="dot" :class="{'active':currentShow==='cd'}"></span>
@@ -75,7 +78,11 @@
         </div>
       </div>
     </transition>
-    <transition name="mini">
+    <transition name="mini"
+      @touchstart.prevent="middleTouchStart"
+      @touchmove.prevent="middleTouchMove"
+      @touchend.prevent="middleTouchEnd"
+      >
       <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="icon">
           <img :class="cdCls" width="40" height="40" :src="currentSong.image">
@@ -111,7 +118,7 @@
   import ProgressBar from 'base/progress-bar/progress-bar'
   import ProgressCircle from 'base/progress-circle/progress-circle'
   import {playMode} from 'common/js/config'
-  import Lyric from 'lyric-parser'
+  import Lyric from 'lyric-parser' //解析歌曲获取的我们需要的歌词
   import Scroll from 'base/scroll/scroll'
   import {playerMixin} from 'common/js/mixin'
   import Playlist from 'components/playlist/playlist'
@@ -126,8 +133,8 @@
         songReady: false,
         currentTime: 0,
         radius: 32,//实际显示的元的大小
-        currentLyric: null,
-        currentLineNum: 0,
+        currentLyric: null,//歌词
+        currentLineNum: 0,//当前歌词所在的行
         currentShow: 'cd',
         playingLyric: '',
         mode:"",//获取播放模式
@@ -163,7 +170,7 @@
       ])
     },
     created() {
-      this.touch = {}
+      this.touch = {}//因为touch不需要添加get和set方法
     },
     methods: {
       back() {
@@ -220,7 +227,7 @@
           return
         }
         this.setPlayingState(!this.playing)
-        if (this.currentLyric) {
+        if (this.currentLyric) {//当歌曲暂停的时候歌词也停下来不动
           this.currentLyric.togglePlay()
         }
       },
@@ -235,7 +242,7 @@
         this.$refs.audio.currentTime = 0
         this.$refs.audio.play()
         this.setPlayingState(true)
-        if (this.currentLyric) {
+        if (this.currentLyric) {//循环播放的时候，歌词又回到最开始的位置
           this.currentLyric.seek(0)
         }
       },
@@ -285,7 +292,7 @@
         this.songReady = true
       },
       updateTime(e) {
-        console.log(e)
+        //console.log(e)
         //获取当前的时间，可读取
         this.currentTime = e.target.currentTime
       },
@@ -301,22 +308,23 @@
         if (!this.playing) {//拖动完了以后自动播放
           this.togglePlaying()
         }
-        if (this.currentLyric) {
+        if (this.currentLyric) {//当拖动的时候歌词也发山相对应的变化
           this.currentLyric.seek(currentTime * 1000)
         }
       },
-      changeMode(){//
+      changeMode(){//没有作用，太困了看不下去了
+
         const mode = (this.mode+1)%3
         alert(playMode.sequence)
         this.setPlayMode(mode)
       },
-      getLyric() {
+      getLyric() {//获取歌词格式化
         this.currentSong.getLyric().then((lyric) => {
           if (this.currentSong.lyric !== lyric) {
             return
           }
-          this.currentLyric = new Lyric(lyric, this.handleLyric)
-          if (this.playing) {
+          this.currentLyric = new Lyric(lyric, this.handleLyric)//当前歌曲的歌词
+          if (this.playing) {//当我们歌曲在播放的时候，才会有歌词，
             this.currentLyric.play()
           }
         }).catch(() => {
@@ -325,9 +333,9 @@
           this.currentLineNum = 0
         })
       },
-      handleLyric({lineNum, txt}) {
+      handleLyric({lineNum, txt}) {//当歌唱的每行发生变化的时候
         this.currentLineNum = lineNum
-        if (lineNum > 5) {
+        if (lineNum > 5) {//前五行，不滚动。保持在五行之内，中间位置
           let lineEl = this.$refs.lyricLine[lineNum - 5]
           this.$refs.lyricList.scrollToElement(lineEl, 1000)
         } else {
@@ -339,7 +347,7 @@
         this.$refs.playlist.show()
       },
       middleTouchStart(e) {
-        this.touch.initiated = true
+        this.touch.initiated = true//初始化
         // 用来判断是否是一次移动
         this.touch.moved = false
         const touch = e.touches[0]
@@ -347,27 +355,28 @@
         this.touch.startY = touch.pageY
       },
       middleTouchMove(e) {
-        if (!this.touch.initiated) {
+        if (!this.touch.initiated) {//如果没有刚开始的滚动，就没有接下来的移动
           return
         }
         const touch = e.touches[0]
         const deltaX = touch.pageX - this.touch.startX
         const deltaY = touch.pageY - this.touch.startY
-        if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        if (Math.abs(deltaY) > Math.abs(deltaX)) {//当纵轴的滚动大于横着的滚动的时候不应该左右移动，只支持横向滚动
           return
         }
         if (!this.touch.moved) {
           this.touch.moved = true
         }
+        // this.currentShow === 'cd'在左侧停着，就我们看的见得，，否则移动到右侧，即隐藏
         const left = this.currentShow === 'cd' ? 0 : -window.innerWidth
-        const offsetWidth = Math.min(0, Math.max(-window.innerWidth, left + deltaX))
-        this.touch.percent = Math.abs(offsetWidth / window.innerWidth)
-        this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px,0,0)`
-        this.$refs.lyricList.$el.style[transitionDuration] = 0
-        this.$refs.middleL.style.opacity = 1 - this.touch.percent
+        const offsetWidth = Math.min(0, Math.max(-window.innerWidth, left + deltaX))//window.innerWidth，left + deltaX左右滑动的位置
+        this.touch.percent = Math.abs(offsetWidth / window.innerWidth)//列表滑动到10%的时候，cd应该要开始隐藏
+        this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px,0,0)`//$el,相当于DOM操作
+        this.$refs.lyricList.$el.style[transitionDuration] = 0//移动的时候没有过度
+        this.$refs.middleL.style.opacity = 1 - this.touch.percent//渐显渐隐
         this.$refs.middleL.style[transitionDuration] = 0
       },
-      middleTouchEnd() {
+      middleTouchEnd() {//到了左侧的时候我们应该要如何处理，从右往左滑动，和从右往左的效果是不样的
         if (!this.touch.moved) {
           return
         }
@@ -375,14 +384,14 @@
         let opacity
         if (this.currentShow === 'cd') {
           if (this.touch.percent > 0.1) {
-            offsetWidth = -window.innerWidth
+            offsetWidth = -window.innerWidth//滑动
             opacity = 0
             this.currentShow = 'lyric'
-          } else {
+          } else {//不滑动
             offsetWidth = 0
             opacity = 1
           }
-        } else {
+        } else {//从左往右
           if (this.touch.percent < 0.9) {
             offsetWidth = 0
             this.currentShow = 'cd'
@@ -394,7 +403,7 @@
         }
         const time = 300
         this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px,0,0)`
-        this.$refs.lyricList.$el.style[transitionDuration] = `${time}ms`
+        this.$refs.lyricList.$el.style[transitionDuration] = `${time}ms`//滚动不那么生硬
         this.$refs.middleL.style.opacity = opacity
         this.$refs.middleL.style[transitionDuration] = `${time}ms`
         this.touch.initiated = false
@@ -440,7 +449,7 @@
         if (newSong.id === oldSong.id) {
           return
         }
-        if (this.currentLyric) {
+        if (this.currentLyric) {//当播放到下一首歌的时候，歌词切换停止，全部懂头开始
           this.currentLyric.stop()
           this.currentTime = 0
           this.playingLyric = ''
@@ -449,6 +458,8 @@
         //等渲染完了，在播放，否则会报错
         this.$nextTick(()=>{
           this.$refs.audio.play()
+          this.getLyric();//不明白为什么可以调用getLyric()
+          console.log(this.currentSong)
         })
         // clearTimeout(this.timer)
         // this.timer = setTimeout(() => {
