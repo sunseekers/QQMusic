@@ -2,7 +2,7 @@ import {mapGetters, mapMutations, mapActions} from 'vuex'
 import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/util'
 // Mixin是一个对象，如果我们的组件都需要用到一个东西，并且逻辑差不多，把一段js放一个地方写，只要组件用了，会自定添加到我们的代码里面
-export const playlistMixin = {
+export const playlistMixin = {//和写组件非常类似
   computed: {
     ...mapGetters([
       'playlist'
@@ -20,7 +20,7 @@ export const playlistMixin = {
     }
   },
   methods: {
-    handlePlaylist() {
+    handlePlaylist() {//处理歌单列表
       throw new Error('component must implement handlePlaylist method')
     }
   }

@@ -29,6 +29,7 @@
                 <img class="image" :src="currentSong.image">
               </div>
             </div>
+            <!-- 图片地下的歌词显示 -->
             <div class="playing-lyric-wrapper">
               <div class="playing-lyric">{{playingLyric}}</div>
             </div>
@@ -136,7 +137,7 @@
         currentLyric: null,//歌词
         currentLineNum: 0,//当前歌词所在的行
         currentShow: 'cd',
-        playingLyric: '',
+        playingLyric: '',//是一个DOM有映射
         mode:"",//获取播放模式
       }
     },
@@ -250,7 +251,7 @@
         if (!this.songReady) {//如果歌曲还没开始播放的时候，就不跳到下一首歌，为了防止频繁点导致用户体验不好
           return
         }
-        if (this.playlist.length === 1) {
+        if (this.playlist.length === 1) {//当只有一首歌的时候，index始终没有变，歌曲的id没有变，后面的逻辑都不会执行，边界条件处理
           this.loop()
           return
         } else {
@@ -327,7 +328,7 @@
           if (this.playing) {//当我们歌曲在播放的时候，才会有歌词，
             this.currentLyric.play()
           }
-        }).catch(() => {
+        }).catch(() => {//异常处理，清理
           this.currentLyric = null
           this.playingLyric = ''
           this.currentLineNum = 0
@@ -456,16 +457,17 @@
           this.currentLineNum = 0
         }
         //等渲染完了，在播放，否则会报错
-        this.$nextTick(()=>{
-          this.$refs.audio.play()
-          this.getLyric();//不明白为什么可以调用getLyric()
-          console.log(this.currentSong)
-        })
-        // clearTimeout(this.timer)
-        // this.timer = setTimeout(() => {
+        // this.$nextTick(()=>{
         //   this.$refs.audio.play()
-        //   this.getLyric()
-        // }, 1000)
+        //   this.getLyric();//不明白为什么可以调用getLyric()
+        //   console.log(this.currentSong)
+        // })
+        //延迟时间长一点，保证微信从后台跳到前台，依旧可以播放，解决手机端的bug
+        clearTimeout(this.timer)
+        this.timer = setTimeout(() => {
+          this.$refs.audio.play()
+          this.getLyric()
+        }, 1000)
       },
       playing(newPlaying) {
         const audio = this.$refs.audio
