@@ -21,7 +21,7 @@
         type: Array,
         default: []
       },
-      rank: {
+      rank: {//默认是没有排行的，需要的时候从外传入
         type: Boolean,
         default: false
       }
@@ -34,14 +34,14 @@
       getDesc(song) {
         return `${song.singer}·${song.album}`
       },
-      getRankCls(index) {
+      getRankCls(index) {//前三放图片
         if (index <= 2) {
           return `icon icon${index}`
         } else {
           return 'text'
         }
       },
-      getRankText(index) {
+      getRankText(index) { //后面不放图片，直接上index
         if (index > 2) {
           return index + 1
         }

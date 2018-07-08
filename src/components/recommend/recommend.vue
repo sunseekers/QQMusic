@@ -39,9 +39,11 @@ import {getRecommend, getDiscList} from 'api/recommend'
 import {ERR_OK} from 'api/config'
 import Scroll from 'base/scroll/scroll'
 import Slider from 'base/slider/slider'
-  import {playlistMixin} from 'common/js/mixin'//底部高度自适应，即歌单不被播放的隐藏
+import {playlistMixin} from 'common/js/mixin'//底部高度自适应，即歌单不被播放的隐藏
 import Loading from 'base/loading/loading'
+import {mapMutations} from 'vuex'
   export default {
+    mixins:[playlistMixin],
     data(){
       return {
         recommend:[],
@@ -67,6 +69,7 @@ import Loading from 'base/loading/loading'
         this.$router.push({
           path:'/recommend/${item.dissid}'
         })
+        this.setDisc(items)
       },
       _getRecommend(){
         getRecommend().then(res=>{
@@ -89,7 +92,10 @@ import Loading from 'base/loading/loading'
           this.$refs.scroll.refresh()
           this.checkLoaded = true
         }
-      }
+      },
+      ...mapMutations({
+        setDisc:'SET_DISC'
+      })
     }
   }
 </script>
