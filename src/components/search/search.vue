@@ -8,7 +8,7 @@
       <scroll class="shortcut" ref="shortcut" :data="shortcut">
         <div>
           <div class="hot-key">
-            <h1 class="title">热门歌曲</h1>
+            <h1 class="title">热门搜索</h1>
             <ul>
               <li @click="addQuery(item.k)" class="item" v-for="(item,index) in hotKey" :key="index">
                 <span>{{item.k}}</span>
