@@ -5,6 +5,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+//  合适的时间派发一件事件，不做任何业务逻辑
   import BScroll from 'better-scroll'
 
   export default {
@@ -25,11 +26,11 @@
         type: Array,
         default: null
       },
-      pullup: {
+      pullup: {//是否开启下拉刷新
         type: Boolean,
         default: false
       },
-      beforeScroll: {
+      beforeScroll: {//开始滚动前派发一个事件
         type: Boolean,
         default: false
       },

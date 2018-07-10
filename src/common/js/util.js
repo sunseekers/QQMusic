@@ -13,15 +13,29 @@ export function shuffle(arr) {
   return _arr
 }
 
-export function debounce(func, delay) {
-  let timer
+// export function debounce(func, delay) {
+//   let timer
 
+//   return function (...args) {
+//     if (timer) {
+//       clearTimeout(timer)
+//     }
+//     timer = setTimeout(() => {
+//       func.apply(this, args)
+//     }, delay)
+//   }
+// }
+//函数节流,当一个函数反复被调用的时候，他只会执行一次
+export function debounce(func,delay){
+  let timer
+  //调用一个函数，返回另一个函数叫做柯里化
   return function (...args) {
     if (timer) {
       clearTimeout(timer)
     }
-    timer = setTimeout(() => {
-      func.apply(this, args)
-    }, delay)
+    timer = setTimeout(()=>{
+      func.apply(this,args)
+    },delay)
+    
   }
 }

@@ -99,7 +99,7 @@ export function createSong(musicData) {
     url: `http://ws.stream.qqmusic.qq.com/${musicData.songid}.m4a?fromtag=46`    
   })  
 }
-function filterSinger (singer){
+export function filterSinger (singer){
   let ret = []
   if (!singer) {
     return ""

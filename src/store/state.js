@@ -12,7 +12,7 @@ const state = {
   currentIndex: -1,//当前播放的歌曲，为了后面的前进后退
   disc: {},
   topList: {},
-  searchHistory: loadSearch(),
+  searchHistory: loadSearch(),//不仅在搜索列表有历史记录，还在添加歌曲里面有，所以我们要保存到全局
   playHistory: loadPlay(),
   favoriteList: loadFavorite()
 }
