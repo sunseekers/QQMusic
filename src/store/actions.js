@@ -1,6 +1,6 @@
 //在一个动作中需要多次去修改一个动作，我们一般放在action里面
 import * as types from "./mutation-types"
-import {saveSearch} from 'common/js/cache'
+import {saveSearch,deleteSearch} from 'common/js/cache'
 function findIndex(list, song) {
   return list.findIndex((item) => {
     return item.id === song.id
@@ -59,5 +59,8 @@ export const insertSong = function ({commit,state},song){//没有修改成功，
   commit(types.SET_PLAYING_STATE, true)
 }
 export const saveSearchHistory = function ({commit},query){
-commit(types.SET_SEARCH_HISTORY,saveSearch(query))//获取到的列表保存到了mutation里面
+  commit(types.SET_SEARCH_HISTORY,saveSearch(query))//获取到的列表保存到了mutation里面
+}
+export const deleteSearchHistory = function ({commit},query){
+  commit(types.SET_SEARCH_HISTORY,deleteSearch(query))
 }

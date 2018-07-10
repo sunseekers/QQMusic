@@ -148,6 +148,9 @@ export default {
     listScroll(){//不做业务处理，只派发事件
       this.$emit('listScroll')
     },
+    refresh(){
+      this.$refs.suggest.refresh()
+    },
     ...mapMutations({
       setSinger:"SET_SINGER"//映射 setSinger 是一个方法名，SET_SINGER 是mutations-types 里面的数据
     }),

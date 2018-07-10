@@ -3,21 +3,35 @@
     <div class="search-box-wrapper">
       <search-box ref="searchBox" @query="onQueryChange"></search-box>
     </div>
-    <div class="shortcut-wrapper" v-show="!query">
-      <div class="shortcut">
-        <div class="hot-key">
-          <h1 class="title">热门歌曲</h1>
-          <ul>
-            <li @click="addQuery(item.k)" class="item" v-for="(item,index) in hotKey" :key="index">
-              <span>{{item.k}}</span>
-            </li>
-          </ul>
+    <div class="shortcut-wrapper" ref="shortcutWrapper" v-show="!query">
+      <!-- 数据是异步获取的,解决方法searchHistory或者 hotKey有一个发生改变的时候，滚动重新开始计算-->
+      <scroll class="shortcut" ref="shortcut" :data="shortcut">
+        <div>
+          <div class="hot-key">
+            <h1 class="title">热门歌曲</h1>
+            <ul>
+              <li @click="addQuery(item.k)" class="item" v-for="(item,index) in hotKey" :key="index">
+                <span>{{item.k}}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="search-history" v-show="searchHistory.length">
+            <h1 class="title">
+              <span class="text">搜索历史</span>
+              <span class="clear" @click="showConfirm">
+                <i class="icon-clear"></i>
+              </span>
+            </h1>
+            <search-list :searches="searchHistory" @select="addQuery"
+            @delete="deleteSearchHistory"></search-list>
+          </div>
         </div>
-      </div>
+      </scroll>
     </div>
-    <div class="search-result" v-show="query">
-      <suggest :query="query" @listScroll="blurInput" @select="saveSearch"></suggest>
-    </div> 
+    <div class="search-result" v-show="query" ref="searchResult">
+      <suggest ref="suggest" :query="query" @listScroll="blurInput" @select="saveSearch"></suggest>
+    </div>
+    <confirm ref="confirm" text="是否清楚所有历史记录" confirmBtnText="清空" @confirm="clearSearchHistory" ></confirm> 
     <router-view></router-view>
   </div>
 </template>
@@ -26,14 +40,39 @@ import SearchBox from 'base/search-box/search-box'
 import { getHotKey } from 'api/search'
 import { ERR_OK } from 'api/config'
 import Suggest from 'components/suggest/suggest'
-import { mapActions } from 'vuex'
+import SearchList from 'base/search-list/search-list'
+import { mapActions,mapGetters } from 'vuex'
+import Scroll from 'base/scroll/scroll'
+import Confirm from 'base/confirm/confirm'//通过外层来控制是否显示和隐藏
+ import {playlistMixin} from 'common/js/mixin'
 export default {
+  mixins:[playlistMixin],
   components:{
     SearchBox,
-    Suggest
+    Suggest,
+    SearchList,
+    Confirm,
+    Scroll
   },
   created(){
     this._getHotKey()
+  },
+  computed:{
+    ...mapGetters([
+      'searchHistory'//这个数据一直没有获取到记得找原因
+    ]),
+    shortcut(){
+      return this.hotKey.concat(this.searchHistory)
+    }
+  },
+  watch:{
+    query(newQuery){//当输入框的数据发生改变的时候我们手动刷新scroll组件
+      if(!newQuery){
+        setTimeout(()=>{
+          this.$refs.shortcut.refresh()
+        },200)
+      }
+    }
   },
   data(){
     return {
@@ -63,8 +102,27 @@ export default {
     saveSearch(){//将搜索的历史数据保存起来，希望是永久缓存的，我们下一次进来的时候记录依旧在
       this.saveSearchHistory(this.query)
     },
+    // deleteOne(item){
+    //   this.deleteSearchHistory(item)
+    // },
+    deleteAll(){
+      this.clearSearchHistory()//可以直接在组件元素上面地调用这个方法，比如上一个
+    },
+    showConfirm(){
+      this.$refs.confirm.show()
+      this.clearSearchHistory()
+    },
+    handlePlaylist(playlist) {//如果不实现会报错，在mixins里面定义了
+      const bottom = playlist.length > 0 ? '60px' : ''
+      this.$refs.shortcutWrapper.style.bottom = bottom
+      this.$refs.searchResult.style.bottom = bottom
+      this.$refs.shortcut.refresh()
+      this.$refs.suggest.refresh()//searchResult 是子组件里面的scroll，我们需要一层代理
+    },
     ...mapActions ([
-      'saveSearchHistory'
+      'saveSearchHistory',
+      "deleteSearchHistory",
+      "clearSearchHistory"
     ])
   }
 }
