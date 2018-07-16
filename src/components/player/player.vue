@@ -138,7 +138,7 @@
         currentLineNum: 0,//当前歌词所在的行
         currentShow: 'cd',
         playingLyric: '',//是一个DOM有映射
-        mode:"",//获取播放模式
+        // mode:"",//获取播放模式
       }
     },
     computed: {
@@ -158,15 +158,15 @@
       percent() {
         return this.currentTime / this.currentSong.duration //歌曲播放的比例
       },
-      iconMode(){
-        return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 
-        'icon-loop' :'icon-random'
-      },
+      // iconMode(){
+      //   return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 
+      //   'icon-loop' :'icon-random'
+      // },
       ...mapGetters([
         'currentIndex',
         'fullScreen',
         'playing',
-        'playList',
+        // 'playList',
         'currentSong'
       ])
     },
@@ -313,12 +313,10 @@
           this.currentLyric.seek(currentTime * 1000)
         }
       },
-      changeMode(){//没有作用，太困了看不下去了
-
-        const mode = (this.mode+1)%3
-        alert(playMode.sequence)
-        this.setPlayMode(mode)
-      },
+      // changeMode(){//没有作用，太困了看不下去了
+      //   const mode = (this.mode+1)%3
+      //   this.setPlayMode(mode)
+      // },
       getLyric() {//获取歌词格式化
         this.currentSong.getLyric().then((lyric) => {
           if (this.currentSong.lyric !== lyric) {
