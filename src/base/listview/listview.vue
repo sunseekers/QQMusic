@@ -6,30 +6,30 @@
           class="listview"
           ref="listview">
     <ul>
-      <li v-for="group in data" class="list-group" ref="listGroup">
+      <li v-for="(group,index) in data" class="list-group" ref="listGroup" :key="index">
         <h2 class="list-group-title">{{group.title}}</h2>
-        <uL>
-          <li @click="selectItem(item)" v-for="item in group.items" class="list-group-item">
+        <ul>
+          <li @click="selectItem(item)" v-for="(item,index) in group.items" :key="index" class="list-group-item">
             <img class="avatar" v-lazy="item.avatar">
             <span class="name">{{item.name}}</span>
           </li>
-        </uL>
+        </ul>
       </li>
     </ul>
-    <div class="list-shortcut" @touchstart.stop.prevent="onShortcutTouchStart" @touchmove.stop.prevent="onShortcutTouchMove"
+    <!-- <div class="list-shortcut" @touchstart.stop.prevent="onShortcutTouchStart" @touchmove.stop.prevent="onShortcutTouchMove"
          @touchend.stop>
       <ul>
-        <li v-for="(item, index) in shortcutList" :key="index" :data-index="index" class="item"
+        <li v-for="(item, index) in shortcutList" :data-index="index" :key="index" class="item"
             :class="{'current':currentIndex===index}">{{item}}
         </li>
       </ul>
-    </div>
-    <!-- <div class="list-fixed" ref="fixed" v-show="fixedTitle">
+    </div> -->
+    <div class="list-fixed" ref="fixed" v-show="fixedTitle">
       <div class="fixed-title">{{fixedTitle}} </div>
-    </div> -->
-    <!-- <div v-show="!data.length" class="loading-container">
+    </div>
+    <div v-show="!data.length" class="loading-container">
       <loading></loading>
-    </div> -->
+    </div>
   </scroll>
 </template>
 
@@ -54,9 +54,12 @@
           return group.title.substr(0, 1)
         })
       },
-      // fixedTitle() {
-      //   return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
-      // }
+      fixedTitle() {
+        if (this.scrollY > 0) {
+          return ''
+        }
+        return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
+      }
     },
     data() {
       return {
@@ -107,7 +110,6 @@
           height += item.clientHeight
           this.listHeight.push(height)
         }
-        console.log(this.listHeight)
       },
       _scrollTo(index) {
         if (!index && index !== 0) {
@@ -148,14 +150,14 @@
         // 当滚动到底部，且-newY大于最后一个元素的上限
         this.currentIndex = listHeight.length - 2
       },
-      // diff(newVal) {
-      //   let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
-      //   if (this.fixedTop === fixedTop) {
-      //     return
-      //   }
-      //   this.fixedTop = fixedTop
-      //   this.$refs.fixed.style.transform = `translate3d(0,${fixedTop}px,0)`
-      // }
+      diff(newVal) {
+        let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
+        if (this.fixedTop === fixedTop) {
+          return
+        }
+        this.fixedTop = fixedTop
+        this.$refs.fixed.style.transform = `translate3d(0,${fixedTop}px,0)`
+      }
     },
     components: {
       Scroll,

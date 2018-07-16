@@ -1,6 +1,7 @@
 
 <template>
   <transition>
+    <!-- songs 获取不到数据，可能是接口被封 -->
     <music-list :title="title" :bg-image="bgImage" :songs="songs"></music-list>
   </transition>
 </template>
@@ -37,10 +38,11 @@ export default {
   methods:{
     _getSongList(){
       //避免出错
-      if (!this.dis.dissid){
-        return this.$route.push('/recommed')
+      if (!this.disc.dissid){
+        return this.$router.push('/recommed')
       }
       getSongList(this.disc.dissid).then(res=>{
+        console.log(res.cdlist)
         if (res.code === ERR_OK) {
           this.song=this._normalizeSongs(res.cdlist[0].songlist)
         }

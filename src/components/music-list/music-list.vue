@@ -95,30 +95,23 @@
         // replace：导航到不同 url，替换 history 栈中当前记录
       },
       selectItem(item,index){//定义一个方法，当事件被点击的时候
-      //
         this.selectPaly({
           list:this.songs,
           index
         })
       },
-      ...mapActions([//语法糖，包装成类似于函数调用的方式。
-        'selectPaly'
+      // ...mapActions([//语法糖，包装成类似于函数调用的方式。
+      //   'selectPaly'
+      // ]),
+      random() {
+        this.randomPlay({
+          list: this.songs
+        })
+      },
+      ...mapActions([
+        'selectPaly',
+        'randomPlay'
       ])
-      // selectItem(item, index) {
-      //   this.selectPlay({
-      //     list: this.songs,
-      //     index
-      //   })
-      // },
-      // random() {
-      //   this.randomPlay({
-      //     list: this.songs
-      //   })
-      // },
-      // ...mapActions([
-      //   'selectPlay',
-      //   'randomPlay'
-      // ])
     },
     watch: {
       scrollY(newVal) {
