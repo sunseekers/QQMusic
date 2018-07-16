@@ -67,9 +67,9 @@ import {mapMutations} from 'vuex'
       },
       selectItem(item){
         this.$router.push({
-          path:'/recommend/${item.dissid}'
+          path:`/recommend/${item.dissid}`
         })
-        this.setDisc(items)
+        this.setDisc(item)
       },
       _getRecommend(){
         getRecommend().then(res=>{
@@ -79,11 +79,10 @@ import {mapMutations} from 'vuex'
         })
       },
       _getDiscList(){
-        console.log(getDiscList())
         getDiscList().then(res=>{
           if(res.code === ERR_OK){
+            console.log( res.data.list)
             this.discList = res.data.list
-            console.log(res.data.list)
           }
         })
       },
