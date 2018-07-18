@@ -19,7 +19,7 @@
         type: Boolean,
         default: true
       },
-      listenScroll: {
+      listenScroll: {//要不要监听滚动事件
         type: Boolean,
         default: false
       },
@@ -58,9 +58,9 @@
         })
 
         if (this.listenScroll) {
-          let me = this
-          this.scroll.on('scroll', (pos) => {
-            me.$emit('scroll', pos)
+          let me = this//箭头函数里的的this，我们需要指向vue实例的this
+          this.scroll.on('scroll', (pos) => {//滚动到的位置
+            me.$emit('scroll', pos)//pos是一个对象，有x，y值
           })
         }
 

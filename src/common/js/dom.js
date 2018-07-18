@@ -9,12 +9,13 @@ export function hasClass(el,className){
   return reg.test(el.className)
 }
 
-export function getData(el, name, val) {
+export function getData(el, name, val) {//获取index索引
   const prefix = 'data-'
+   name = prefix + name
   if (val) {
-    return el.setAttribute(prefix + name, val)
+    return el.setAttribute(name, val)
   }
-  return el.getAttribute(prefix + name)
+  return el.getAttribute(name)
 }
 
 // export function getData(el,name,val){
