@@ -1,8 +1,7 @@
 <template>
   <div class="slide" ref="slide">
     <div class="slide-group" ref="slideGroup">
-      <slot>
-      </slot>
+      <slot></slot>
     </div>
     <div v-if="showDot" class="dots">
       <span class="dot" :class="{active: currentPageIndex === index }" v-for="(item, index) in dots" :key="index"></span>
@@ -49,12 +48,15 @@
     data() {
       return {
         dots: [],
-        currentPageIndex: 0
+        currentPageIndex: 0//轮播当前第几个页
       }
     },
     mounted() {
+      //如果渲染时间不对或者渲染的时候高度宽度没有计算出来会导致，没有轮播效果
+      //保证DOM 顺利渲染，延迟，浏览器一般是17毫秒之后刷新
       this.update()
       window.addEventListener('resize', () => {
+        //视图宽度的大小改变了，轮播宽度也要跟着改变，否则会导致轮播图的和视图的宽度不一样，显示效果变形
         if (!this.slide || !this.slide.enabled) {
           return
         }
@@ -67,7 +69,7 @@
               this._play()
             }
           }
-          this.refresh()
+          this.refresh()//宽度发生变化就要重新计算
         }, 60)
       })
     },
@@ -87,7 +89,7 @@
       this.slide.disable()
       clearTimeout(this.timer)
     },
-    beforeDestroy() {
+    beforeDestroy() {//当我们的组件在销毁的时候，应该手动把计时器清楚掉
       this.slide.disable()
       clearTimeout(this.timer)
     },
@@ -123,9 +125,9 @@
         }
       },
       _setSlideWidth(isResize) {
-        this.children = this.$refs.slideGroup.children
-        let width = 0
-        let slideWidth = this.$refs.slide.clientWidth
+        this.children = this.$refs.slideGroup.children//子元素的宽度
+        let width = 0//总的宽度
+        let slideWidth = this.$refs.slide.clientWidth//父元素的宽度
         for (let i = 0; i < this.children.length; i++) {
           let child = this.children[i]
           addClass(child, 'slide-item')
@@ -133,11 +135,12 @@
           width += slideWidth
         }
         if (this.loop && !isResize) {
-          width += 2 * slideWidth
+          width += 2 * slideWidth//保证左右循环无缝的
         }
         this.$refs.slideGroup.style.width = width + 'px'
       },
       _initSlide() {
+            //初始化和计算宽度
         console.log(this.threshold)
         this.slide = new BScroll(this.$refs.slide, {
           scrollX: true,

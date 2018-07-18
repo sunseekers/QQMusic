@@ -1,4 +1,5 @@
 <template>
+<!-- 基础组件 -->
   <div ref="wrapper">
     <slot></slot>
   </div>
@@ -40,13 +41,15 @@
       }
     },
     mounted() {
+      //如果渲染时间不对或者渲染的时候高度宽度没有计算出来会导致，没有轮播效果
+      //保证DOM 顺利渲染，延迟，浏览器一般是17毫秒之后刷新
       setTimeout(() => {
         this._initScroll()
       }, 20)
     },
     methods: {
       _initScroll() {
-        if (!this.$refs.wrapper) {
+        if (!this.$refs.wrapper) {//如果第一个参数没有存在的时候就返回，保证不出错
           return
         }
         this.scroll = new BScroll(this.$refs.wrapper, {
@@ -92,7 +95,7 @@
       }
     },
     watch: {
-      data() {
+      data() {//数据发生改变的时候就重新刷新
         setTimeout(() => {
           this.refresh()
         }, this.refreshDelay)

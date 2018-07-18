@@ -10,7 +10,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
 
-//试着反向代理，不一定会成功
+//欺骗浏览器，修改http的头部信息
 const express = require('express')
 const axios = require('axios')
 const app = express()
@@ -30,8 +30,10 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   // these devServer options should be customized in /config/index.js
   devServer: {
     before(app) {
+
       app.get('/api/getDiscList', function (req, res) {
         let url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
+        //发送HTTP请求，欺骗浏览器
         axios.get(url, {
           headers: {
             referer: 'https://c.y.qq.com/',
