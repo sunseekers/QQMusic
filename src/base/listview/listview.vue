@@ -56,7 +56,7 @@
         })
       },
       fixedTitle() {
-        if (this.scrollY > 0) {
+        if (this.scrollY > 0) {//边界条件的处理，避免出现两个热门区域的
           return ''
         }
         return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
@@ -66,7 +66,7 @@
       return {
         scrollY: -1,//实时滚动的位置
         currentIndex: 0,//当前应该显示的哪个
-        diff: -1
+        diff: -1//
       }
     },
     created() {
@@ -123,7 +123,7 @@
           index = 0
         } else if (index > this.listHeight.length - 2) {
           index = this.listHeight.length - 2
-        }
+        }//边界条件的处理
         this.scrollY = -this.listHeight[index]//手动监听点击a-z列表的滚动位置，实现索引高亮
         this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0)
       }

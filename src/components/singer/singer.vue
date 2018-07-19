@@ -34,13 +34,13 @@ export default {
       this.$refs.list.refresh()
     },
     ...mapMutations({
-      setSinger:"SET_SINGER"//映射 setSinger 是一个方法名，SET_SINGER 是mutations-types 里面的数据
+      setSinger:"SET_SINGER"//映射 setSinger 是一个方法名，SET_SINGER 是mutations-types 里面的数据，也可以使用ES6的简写
     }),
     selectSinger(singer){
       this.$router.push({
         path:`/singer/${singer.id}`
       })
-      this.setSinger(singer)
+      this.setSinger(singer)//相当于调用了一个方法，通过mapMutations映射
     },
     _getSingerList(){
       getSingerList().then(res=>{
@@ -63,7 +63,7 @@ export default {
             name: item.Fsinger_name,
           }))
         }
-        const key = item.Findex
+        const key = item.Findex//首字母大写 
         if(!map[key]){
           map[key] = {
             title: key,
@@ -102,3 +102,10 @@ export default {
     bottom: 0
     width: 100%
 </style>
+function aa(){
+  let that =this
+  console.log(that)
+  return function bb(){
+    console.log(that)
+  }
+}
