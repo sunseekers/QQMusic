@@ -96,7 +96,7 @@ export function createSong(musicData) {
     album: musicData.albumname,
     duration: musicData.interval,
     image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.albummid}.jpg?max_age=2592000`,
-    url: `http://ws.stream.qqmusic.qq.com/${musicData.songid}.m4a?fromtag=46`    
+    url: `http://ws.stream.qqmusic.qq.com/${musicData.songid}.m4a?fromtag=46` 
   })  
 }
 export function filterSinger (singer){

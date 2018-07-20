@@ -33,7 +33,7 @@
     },
     methods: {
       _getDetail() {
-        if (!this.singer.id) {
+        if (!this.singer.id) {//刷新页面就回到歌单页面，边界情况处理
           this.$router.push('/singer')
           return
         }
@@ -46,7 +46,7 @@
       _normalizeSongs(list) {
         let ret = []
         list.forEach((item) => {
-          let {musicData} = item
+          let {musicData} = item//ES6 的写法，表示item对象里面的musicData字段单独赋值给musicData
           if (musicData.songid && musicData.albummid) {
             ret.push(createSong(musicData))
           }

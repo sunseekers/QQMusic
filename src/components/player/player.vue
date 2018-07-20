@@ -416,15 +416,16 @@
         return num
       },
       _getPosAndScale() {//获取目标位置。初始尺寸
-        const targetWidth = 40
-        const paddingLeft = 40
-        const paddingBottom = 30
-        const paddingTop = 80
-        const width = window.innerWidth * 0.8
+        const targetWidth = 40//小播放器的width
+        const paddingLeft = 40//小播放器到左边的padding
+        const paddingBottom = 30//小播放器到下面的padding
+        const paddingTop = 80//大播放器到上面的padding
+        const width = window.innerWidth * 0.8//大播放器的宽度
         const scale = targetWidth / width//初始缩放比例
         const x = -(window.innerWidth / 2 - paddingLeft)//大图片的x位置
         const y = window.innerHeight - paddingTop - width / 2 - paddingBottom//大图片的Y的位置
-        return {
+      // console.log(x,y)
+       return {
           x,
           y,
           scale

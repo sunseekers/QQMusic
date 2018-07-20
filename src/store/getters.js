@@ -1,4 +1,4 @@
-//还可以承担计算属性的作用
+//还可以承担计算属性的作用，可以根据state的不同值计算出一个新值,还可以写一下复杂的判断逻辑
 export const singer = state => state.singer
 
 export const playing = state => state.playing
