@@ -2,8 +2,8 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-export function shuffle(arr) {
-  let _arr = arr.slice()
+export function shuffle(arr) {//洗牌函数，即打乱函数
+  let _arr = arr.slice()//避免直接修改原来的数组
   for (let i = 0; i < _arr.length; i++) {
     let j = getRandomInt(0, i)
     let t = _arr[i]

@@ -41,8 +41,9 @@ export default {
       if (!this.disc.dissid){
         return this.$router.push('/recommed')
       }
+      console.log(this.disc)
       getSongList(this.disc.dissid).then(res=>{
-        console.log(res.cdlist)
+        console.log(res.cdlist[0])
         if (res.code === ERR_OK) {
           this.song=this._normalizeSongs(res.cdlist[0].songlist)
         }

@@ -21,6 +21,7 @@ export default {
     }
   },
   created(){
+    //console.log(this.$watch())
     //当query发生改变的时候，会派发一个事件，告诉外部组件我发生变化了，使用节流函数，减少请求次数
       this.$watch('query', debounce((newQuery) => {
         this.$emit('query', newQuery)

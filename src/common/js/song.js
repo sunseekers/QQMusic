@@ -1,6 +1,6 @@
-// import {getLyric} from 'api/song'
-// import {ERR_OK} from 'api/config'
-// import {Base64} from 'js-base64'
+import {getLyric} from 'api/song'
+import {ERR_OK} from 'api/config'
+import {Base64} from 'js-base64'
 
 // export default class Song {
 //   constructor({id, mid, singer, name, album, duration, image, url}) {
@@ -56,7 +56,7 @@
 //   return ret.join('/')
 // }
 
-import {getLyric} from 'api/song'
+// import {getLyric} from 'api/song'
 export default class Song {
   //设计类，代码集中一个地方类便于维护，不用去写大量的代码，类的扩展性强面向对象
   constructor({id,mid,singer,name,album,duration,image,url}) {
@@ -70,14 +70,14 @@ export default class Song {
     this.url = url
   }
   getLyric() {//需要返回一个 Promise，这个函数就是去或者歌词然后返回出去
-    if (this.lyric) {
+    if (this.lyric) {//this.lyric 只有他发生变化的时候才去请求接口
       return Promise.resolve(this.lyric)
     }
 
     return new Promise((resolve, reject) => {
       getLyric(this.mid).then((res) => {
         if (res.retcode === ERR_OK) {
-          this.lyric = Base64.decode(res.lyric)
+          this.lyric = Base64.decode(res.lyric)//base664 解码，不解码出来一串不认识的东西
           resolve(this.lyric)
         } else {
           reject('no lyric')
@@ -96,7 +96,7 @@ export function createSong(musicData) {
     album: musicData.albumname,
     duration: musicData.interval,
     image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.albummid}.jpg?max_age=2592000`,
-    url: `http://ws.stream.qqmusic.qq.com/${musicData.songid}.m4a?fromtag=46` 
+    url: `http://ws.stream.qqmusic.qq.com/${musicData.songid}.m4a?fromtag=46` //这个播放地址又问提导致不能播放，应该找一个正确的地址
   })  
 }
 export function filterSinger (singer){

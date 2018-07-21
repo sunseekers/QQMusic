@@ -158,10 +158,10 @@
       percent() {
         return this.currentTime / this.currentSong.duration //歌曲播放的比例
       },
-      // iconMode(){
-      //   return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 
-      //   'icon-loop' :'icon-random'
-      // },
+      iconMode(){
+        return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 
+        'icon-loop' :'icon-random'
+      },
       ...mapGetters([
         'currentIndex',
         'fullScreen',
@@ -313,10 +313,6 @@
           this.currentLyric.seek(currentTime * 1000)
         }
       },
-      // changeMode(){//没有作用，太困了看不下去了
-      //   const mode = (this.mode+1)%3
-      //   this.setPlayMode(mode)
-      // },
       getLyric() {//获取歌词格式化
         this.currentSong.getLyric().then((lyric) => {
           if (this.currentSong.lyric !== lyric) {
@@ -335,7 +331,7 @@
       handleLyric({lineNum, txt}) {//当歌唱的每行发生变化的时候
         this.currentLineNum = lineNum
         if (lineNum > 5) {//前五行，不滚动。保持在五行之内，中间位置
-          let lineEl = this.$refs.lyricLine[lineNum - 5]
+          let lineEl = this.$refs.lyricLine[lineNum - 5]//滚动到当前行在往下走5行，保存在中间
           this.$refs.lyricList.scrollToElement(lineEl, 1000)
         } else {
           this.$refs.lyricList.scrollTo(0, 0, 1000)
@@ -424,7 +420,7 @@
         const scale = targetWidth / width//初始缩放比例
         const x = -(window.innerWidth / 2 - paddingLeft)//大图片的x位置
         const y = window.innerHeight - paddingTop - width / 2 - paddingBottom//大图片的Y的位置
-      // console.log(x,y)
+      //  console.log(x,y)
        return {
           x,
           y,

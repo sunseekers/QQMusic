@@ -4,7 +4,7 @@
       <i class="icon-back"></i>
     </div>
     <h1 class="title" v-html="title"></h1>
-    <div class="bg-image" :style="bgStyle" ref="bgImage">
+    <div class="bg-image" :style="bgStyle" ref="bgImage" @click="random">
       <div class="play-wrapper">
         <div ref="playBtn" v-show="songs.length>0" class="play">
           <i class="icon-play"></i>
@@ -78,7 +78,7 @@
       this.$refs.list.$el.style.top = `${this.imageHeight}px`
     },
     methods: {
-      handlePlaylist(playlist) {//如果不实现会报错，在mixins里面定义了
+      handlePlaylist(playlist) {//如果不实现会报错，在mixins里面定义了这个方法，我们需要用这个组件里面的方法覆盖之前的
         const bottom = playlist.length > 0 ? '60px' : ''
         this.$refs.list.$el.style.bottom = bottom
         this.$refs.list.refresh()

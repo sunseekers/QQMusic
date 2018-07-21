@@ -101,7 +101,7 @@ export default {
         return 'icon-music'
       }
     },
-    getDisplayName(item) {
+    getDisplayName(item) {//如果是歌手就只显示歌手，如果是歌曲就显示歌曲和歌手
       console.log(item.type === TYPE_SINGER)
       if (item.type === TYPE_SINGER) {
         return item.singername
@@ -118,7 +118,7 @@ export default {
       })
       return ret
     },
-    searchMore(){//搜索更多
+    searchMore(){//搜索更多，重新请求接口，修改请求接口的参数
       if (!this.hasMore) {
         return
       }

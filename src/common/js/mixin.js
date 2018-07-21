@@ -41,6 +41,7 @@ export const playerMixin = {
   },
   methods: {
     changeMode() {
+      console.log(playMode)
       const mode = (this.mode + 1) % 3
       this.setPlayMode(mode)
       let list = null

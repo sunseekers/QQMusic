@@ -57,7 +57,9 @@
           this.$refs.progressBtn.style[transform] = `translate3d(${offsetWidth}px,0,0)`
       },
       progressClick(e){
-        this._offset(e.offsetX)//获取偏移量，并告诉外层，我发生了变化
+        const rect = this.$refs.progressBar.getBoundingClientRect
+        const offsetWidth = e.pagec- rect.left
+        this._offset(offsetWidth)//获取偏移量，并告诉外层，我发生了变化
         this._triggerPercent()
       },
     },
@@ -65,7 +67,7 @@
       percent(newPercent){//外面传进的，并且不断改变
         if(newPercent >= 0 && !this.touch.initiated){
           const barWidth = this.$refs.progressBar.clientWidth - progressWidth
-          const offsetWidth = barWidth * newPercent
+          const offsetWidth = barWidth * newPercent//播放的进度条
           this._offset(offsetWidth)
         }
       }
