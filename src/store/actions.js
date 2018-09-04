@@ -45,7 +45,7 @@ export const insertSong = function ({commit,state},song){//没有修改成功，
     // 因为是插入歌曲，所以索引+1
     currentIndex++
     // 插入这首歌到当前索引位置
-    playlist.splice(currentIndex, 0, song)
+    playlist.splice(currentIndex, 0, song)//会直接修改原数组
     // 如果已经包含了这首歌
     if (fpIndex > -1) {
       // 如果当前插入的序号大于列表中的序号

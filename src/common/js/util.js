@@ -25,7 +25,7 @@ export function shuffle(arr) {//洗牌函数，即打乱函数
 //     }, delay)
 //   }
 // }
-//函数节流,当一个函数反复被调用的时候，他只会执行一次
+//函数节流,当一个函数反复被调用的时候，他只会执行一次，减少流量的浪费，带宽。性能优化
 export function debounce(func,delay){
   let timer
   //调用一个函数，返回另一个函数叫做柯里化
@@ -39,3 +39,4 @@ export function debounce(func,delay){
     
   }
 }
+//在用户体验角度开发，我们开发过程中除了完成PM给我们提的需要，还应该在用户的角度去思考事情

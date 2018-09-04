@@ -36,7 +36,7 @@ import Loading from 'base/loading/loading'
 import Singer from 'common/js/singer'
 import { mapMutations,mapActions } from "vuex"
 import NoResult from 'base/no-result/no-result'
-const TYPE_SINGER = 'singer'
+const TYPE_SINGER = 'singer'//语义化更强
 const perpage = 20 //为了以后的扩展性
 export default {
   props:{//这个组件依赖我们的检索词-

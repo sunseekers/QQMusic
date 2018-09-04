@@ -1,6 +1,7 @@
 <template>
   <transition name="list-fade">
     <div class="playlist" @click="hide" v-show="showFlag">
+      <!-- 为了防止事件向上冒泡，我们用click.stop 把他截获，阻止向上冒泡 -->
       <div class="list-wrapper" @click.stop>
         <div class="list-header">
           <h1 class="title">
